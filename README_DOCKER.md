@@ -5,7 +5,7 @@ Deploy Learning Log using Docker in production or development environments.
 ## 🚀 Quick Start
 
 ```bash
-git clone <your-repo-url>
+git clone <repo-url>
 cd learning-log
 cp .env.example .env
 # Edit .env and change SECRET_KEY
