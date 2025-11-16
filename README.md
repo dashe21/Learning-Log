@@ -2,6 +2,8 @@
 
 A modern, feature-rich web application designed for lifelong learners, students, and professionals who want to organize their learning journey systematically. Built with Flask and modern web technologies, Learning Log provides an intuitive platform to document knowledge, track progress, and discover learning patterns through powerful analytics.
 
+## Video Demo: https://youtu.be/hwyECAy8YQE
+
 ![Flask](https://img.shields.io/badge/Flask-2.3+-red?style=flat-square&logo=flask)
 ![Docker](https://img.shields.io/badge/Docker-Supported-blue?style=flat-square&logo=docker)
 ![Python](https://img.shields.io/badge/Python-3.9+-blue?style=flat-square&logo=python)
