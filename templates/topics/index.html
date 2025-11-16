@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}My Topics - Learning Log{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-list-ul"></i> My Topics</h2>
+            <a href="{{ url_for('topics.create') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> New Topic
+            </a>
+        </div>
+    </div>
+</div>
+
+{% if topics.items %}
+    <div class="row">
+        {% for topic in topics.items %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card topic-card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">{{ topic.name }}</h6>
+                        <span class="badge bg-primary">{{ topic.entries|length }} entries</span>
+                    </div>
+                    <div class="card-body">
+                        {% if topic.description %}
+                            <div class="card-text rich-content-preview">{{ topic.description|striptags|truncate(150) }}</div>
+                        {% else %}
+                            <p class="card-text text-muted">No description provided</p>
+                        {% endif %}
+                        
+                        <div class="mt-auto">
+                            {% if topic.tags %}
+                                <div class="mb-2">
+                                    {% for tag in topic.tags %}
+                                        <a href="{{ url_for('tags.view_tag_content', tag_name=tag.name) }}" class="badge text-decoration-none me-1" 
+                                           style="background-color: {{ tag.display_color }}; color: white; font-size: 0.7rem;" 
+                                           title="View all content tagged with {{ tag.name }}">
+                                            {{ tag.name }}
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            
+                            <small class="text-muted d-block mb-2">
+                                <i class="bi bi-calendar"></i> Created {{ topic.date_created.strftime('%b %d, %Y') }}
+                            </small>
+                            
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('topics.view', id=topic.id) }}" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-eye"></i> View
+                                </a>
+                                <a href="{{ url_for('topics.edit', id=topic.id) }}" class="btn btn-outline-secondary btn-sm">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+                                <a href="{{ url_for('topics.create_entry', topic_id=topic.id) }}" class="btn btn-outline-success btn-sm">
+                                    <i class="bi bi-plus"></i> Add Entry
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if topics.pages > 1 %}
+        <nav aria-label="Topics pagination">
+            <ul class="pagination justify-content-center">
+                {% if topics.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('topics.index', page=topics.prev_num) }}">Previous</a>
+                    </li>
+                {% endif %}
+                
+                {% for page_num in topics.iter_pages() %}
+                    {% if page_num %}
+                        {% if page_num != topics.page %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('topics.index', page=page_num) }}">{{ page_num }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ page_num }}</span>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if topics.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('topics.index', page=topics.next_num) }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+{% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-journal-x display-1 text-muted mb-3"></i>
+        <h3>No topics yet</h3>
+        <p class="text-muted">Create your first learning topic to start organizing your studies!</p>
+        <a href="{{ url_for('topics.create') }}" class="btn btn-primary btn-lg">
+            <i class="bi bi-plus-circle"></i> Create First Topic
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

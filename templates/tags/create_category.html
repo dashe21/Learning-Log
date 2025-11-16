@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Create Category - Learning Log{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('tags.categories') }}">Categories</a></li>
+                <li class="breadcrumb-item active">Create Category</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="bi bi-plus-square"></i> Create New Category</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ form.name.label(class="form-label") }}
+                        {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else ""), placeholder="e.g., Programming, Languages, Science") }}
+                        {% if form.name.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.name.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.description.label(class="form-label") }}
+                        {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), placeholder="What kind of tags belong in this category?") }}
+                        {% if form.description.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.description.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Optional - helps explain the category's purpose</div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.color.label(class="form-label") }}
+                                {{ form.color(class="form-control form-control-color" + (" is-invalid" if form.color.errors else ""), style="width: 60px; height: 40px;") }}
+                                {% if form.color.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.color.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Choose a color theme</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                {{ form.icon.label(class="form-label") }}
+                                {{ form.icon(class="form-select" + (" is-invalid" if form.icon.errors else "")) }}
+                                {% if form.icon.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.icon.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Pick an icon to represent this category</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        {{ form.submit(class="btn btn-primary") }}
+                        <a href="{{ url_for('tags.categories') }}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Preview Card -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-eye"></i> Preview</h6>
+            </div>
+            <div class="card-body">
+                <div class="category-preview" id="categoryPreview">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi-tag me-2" style="color: #6c757d;" id="previewIcon"></i>
+                        <span class="fw-bold" id="previewName">Category Name</span>
+                    </div>
+                    <p class="text-muted small mb-0" id="previewDescription">Category description will appear here</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const nameField = document.getElementById('name');
+    const descField = document.getElementById('description');
+    const colorField = document.getElementById('color');
+    const iconField = document.getElementById('icon');
+    
+    const previewName = document.getElementById('previewName');
+    const previewDescription = document.getElementById('previewDescription');
+    const previewIcon = document.getElementById('previewIcon');
+    
+    function updatePreview() {
+        previewName.textContent = nameField.value || 'Category Name';
+        previewDescription.textContent = descField.value || 'Category description will appear here';
+        previewIcon.style.color = colorField.value;
+        previewIcon.className = iconField.value + ' me-2';
+    }
+    
+    nameField.addEventListener('input', updatePreview);
+    descField.addEventListener('input', updatePreview);
+    colorField.addEventListener('input', updatePreview);
+    iconField.addEventListener('change', updatePreview);
+    
+    // Initial preview update
+    updatePreview();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome - Learning Log{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto text-center">
+        <div class="hero-section py-5 px-4">
+            <div class="hero-content position-relative">
+                <h1 class="display-4 mb-4">
+                    <i class="bi bi-journal-bookmark me-3"></i>
+                    Welcome to Learning Log
+                </h1>
+                <p class="lead mb-4">
+                    🚀 Transform your learning experience with our powerful platform<br>
+                    📚 Organize knowledge • 📝 Track progress • 💡 Unlock insights
+                </p>
+                <div class="hero-stats d-flex justify-content-center gap-4 mb-4 flex-wrap">
+                    <div class="stat-item text-center">
+                        <div class="stat-number">∞</div>
+                        <div class="stat-label">Topics</div>
+                    </div>
+                    <div class="stat-item text-center">
+                        <div class="stat-number">📈</div>
+                        <div class="stat-label">Growth</div>
+                    </div>
+                    <div class="stat-item text-center">
+                        <div class="stat-number">🎯</div>
+                        <div class="stat-label">Success</div>
+                    </div>
+                </div>
+            </div>
+            
+            {% if not current_user.is_authenticated %}
+                <div class="d-grid gap-2 d-md-block">
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-person-plus"></i> Get Started
+                    </a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary btn-lg">
+                        <i class="bi bi-box-arrow-in-right"></i> Login
+                    </a>
+                </div>
+            {% else %}
+                <div class="d-grid gap-2 d-md-block">
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-speedometer2"></i> Go to Dashboard
+                    </a>
+                    <a href="{{ url_for('topics.create') }}" class="btn btn-outline-primary btn-lg">
+                        <i class="bi bi-plus-circle"></i> Create Topic
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5 g-4">
+    <div class="col-md-4">
+        <div class="card h-100 feature-card">
+            <div class="card-body text-center">
+                <div class="feature-icon-wrapper mb-4">
+                    <i class="bi bi-list-ul display-4 text-primary"></i>
+                </div>
+                <h5 class="card-title fw-bold">📚 Organize Topics</h5>
+                <p class="card-text">
+                    Create and manage learning topics with ease. Organize your studies by subject, 
+                    course, or any category that works for you.
+                </p>
+                <div class="feature-badge">
+                    <span class="badge bg-primary">Smart Organization</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 feature-card">
+            <div class="card-body text-center">
+                <div class="feature-icon-wrapper mb-4">
+                    <i class="bi bi-journal-text display-4 text-success"></i>
+                </div>
+                <h5 class="card-title fw-bold">📈 Track Progress</h5>
+                <p class="card-text">
+                    Add detailed entries for each topic. Document what you've learned, 
+                    challenges faced, and insights gained along your journey.
+                </p>
+                <div class="feature-badge">
+                    <span class="badge bg-success">Progress Tracking</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 feature-card">
+            <div class="card-body text-center">
+                <div class="feature-icon-wrapper mb-4">
+                    <i class="bi bi-graph-up display-4 text-warning"></i>
+                </div>
+                <h5 class="card-title fw-bold">💡 Review & Reflect</h5>
+                <p class="card-text">
+                    Look back at your learning journey. Review past entries and 
+                    see how much you've accomplished over time.
+                </p>
+                <div class="feature-badge">
+                    <span class="badge bg-warning text-dark">Insights & Growth</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

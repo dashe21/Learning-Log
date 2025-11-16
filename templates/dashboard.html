@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Learning Log{% endblock %}
+
+{% block content %}
+<div class="dashboard-content">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="bi bi-speedometer2"></i> Dashboard</h2>
+                <div>
+                    <a href="{{ url_for('topics.create') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> New Topic
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-clock-history"></i>
+                    <span>Recent Topics</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if topics %}
+                    {% for topic in topics %}
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+                            <div>
+                                <h6 class="mb-1">
+                                    <a href="{{ url_for('topics.view', id=topic.id) }}" class="text-decoration-none">
+                                        {{ topic.name }}
+                                    </a>
+                                </h6>
+                                <p class="text-muted mb-1">{{ topic.description|striptags|truncate(100) }}</p>
+                                <small class="text-muted">
+                                    Created {{ topic.date_created.strftime('%B %d, %Y') }} • 
+                                    {{ topic.entries|length }} entries
+                                </small>
+                            </div>
+                            <div class="text-end">
+                                <a href="{{ url_for('topics.view', id=topic.id) }}" class="btn btn-sm btn-outline-primary">
+                                    View
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('topics.index') }}" class="btn btn-outline-primary">
+                            View All Topics
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-journal-x display-1 text-muted mb-3"></i>
+                        <h5>No topics yet</h5>
+                        <p class="text-muted">Create your first learning topic to get started!</p>
+                        <a href="{{ url_for('topics.create') }}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Create First Topic
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-graph-up"></i> Your Progress
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="border-end">
+                            <h3 class="text-primary mb-0">{{ current_user.topics|length }}</h3>
+                            <small class="text-muted">Topics</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <h3 class="text-success mb-0">
+                            {% set total_entries = namespace(count=0) %}
+                            {% for topic in current_user.topics %}
+                                {% set total_entries.count = total_entries.count + topic.entries|length %}
+                            {% endfor %}
+                            {{ total_entries.count }}
+                        </h3>
+                        <small class="text-muted">Entries</small>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <p class="text-muted mb-2">Member since</p>
+                    <p class="fw-bold mb-0">{{ current_user.date_joined.strftime('%B %Y') }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-lightbulb"></i> Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('topics.create') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> New Topic
+                    </a>
+                    <a href="{{ url_for('topics.index') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-list-ul"></i> All Topics
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

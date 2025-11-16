@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}Tag: {{ tag.name }} - Learning Log{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('tags.index') }}">Tags</a></li>
+                <li class="breadcrumb-item active">{{ tag.name }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<!-- Tag Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <span class="badge tag-badge-large" style="background-color: {{ tag.display_color }}; color: white;">
+                        {{ tag.name }}
+                    </span>
+                    {% if tag.category %}
+                        <small class="text-muted d-block mt-2">
+                            <i class="{{ tag.category.icon }}"></i> {{ tag.category.name }} category
+                        </small>
+                    {% endif %}
+                </div>
+                
+                {% if tag.description %}
+                    <p class="text-muted mb-3">{{ tag.description }}</p>
+                {% endif %}
+                
+                <div class="row text-center">
+                    <div class="col-4">
+                        <h4 class="text-primary">{{ topics|length }}</h4>
+                        <small class="text-muted">Topics</small>
+                    </div>
+                    <div class="col-4">
+                        <h4 class="text-success">{{ entries|length }}</h4>
+                        <small class="text-muted">Entries</small>
+                    </div>
+                    <div class="col-4">
+                        <h4 class="text-info">{{ tag.usage_count }}</h4>
+                        <small class="text-muted">Total Uses</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Topics Section -->
+{% if topics %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h4><i class="bi bi-collection"></i> Topics Tagged with "{{ tag.name }}"</h4>
+        
+        <div class="row">
+            {% for topic in topics %}
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card topic-card h-100">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <a href="{{ url_for('topics.view', id=topic.id) }}" class="text-decoration-none">
+                                    {{ topic.name }}
+                                </a>
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            {% if topic.description %}
+                                <div class="card-text rich-content-preview small text-muted mb-2">
+                                    {{ topic.description|striptags|truncate(100) }}
+                                </div>
+                            {% endif %}
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="bi bi-journal-text"></i> {{ topic.entries|length }} entries
+                                </small>
+                                <small class="text-muted">
+                                    {{ topic.date_created.strftime('%m/%d/%Y') }}
+                                </small>
+                            </div>
+                            
+                            {% if topic.tags|length > 1 %}
+                                <div class="mt-2">
+                                    {% for topic_tag in topic.tags %}
+                                        {% if topic_tag != tag %}
+                                            <span class="badge badge-sm me-1" style="background-color: {{ topic_tag.display_color }}; color: white; font-size: 0.6rem;">
+                                                {{ topic_tag.name }}
+                                            </span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ url_for('topics.view', id=topic.id) }}" class="btn btn-outline-primary btn-sm w-100">
+                                <i class="bi bi-eye"></i> View Topic
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Entries Section -->
+{% if entries %}
+<div class="row">
+    <div class="col-12">
+        <h4><i class="bi bi-journal-text"></i> Entries Tagged with "{{ tag.name }}"</h4>
+        
+        {% for entry in entries %}
+            <div class="card entry-card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h5 class="card-title">
+                                <a href="{{ url_for('topics.view', id=entry.topic.id) }}#entry-{{ entry.id }}" class="text-decoration-none">
+                                    {{ entry.title }}
+                                </a>
+                            </h5>
+                            <p class="text-muted mb-2">
+                                <i class="bi bi-collection"></i> in 
+                                <a href="{{ url_for('topics.view', id=entry.topic.id) }}" class="text-decoration-none">
+                                    {{ entry.topic.name }}
+                                </a>
+                            </p>
+                            <div class="entry-preview">
+                                {{ entry.content|striptags|truncate(200) }}
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <small class="text-muted">
+                                    <i class="bi bi-clock"></i> {{ entry.date_created.strftime('%B %d, %Y') }}
+                                </small>
+                                {% if entry.tags|length > 1 %}
+                                    <div>
+                                        {% for entry_tag in entry.tags %}
+                                            {% if entry_tag != tag %}
+                                                <span class="badge badge-sm me-1" style="background-color: {{ entry_tag.display_color }}; color: white; font-size: 0.6rem;">
+                                                    {{ entry_tag.name }}
+                                                </span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <a href="{{ url_for('topics.view', id=entry.topic.id) }}#entry-{{ entry.id }}" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-eye"></i> View
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- No Content Message -->
+{% if not topics and not entries %}
+<div class="text-center py-5">
+    <i class="bi bi-tags display-1 text-muted mb-3"></i>
+    <h4>No content found</h4>
+    <p class="text-muted mb-4">No topics or entries are currently tagged with "{{ tag.name }}"</p>
+    <div class="d-flex gap-2 justify-content-center">
+        <a href="{{ url_for('topics.create') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create Topic
+        </a>
+        <a href="{{ url_for('tags.index') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Tags
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<style>
+.tag-badge-large {
+    font-size: 1.2rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 1.5rem;
+    font-weight: 500;
+}
+
+.topic-card, .entry-card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.topic-card:hover, .entry-card:hover {
+    transform: translateY(-2px);
+}
+
+.entry-preview {
+    max-height: 4.5em;
+    overflow: hidden;
+    line-height: 1.5em;
+}
+</style>
+{% endblock %}

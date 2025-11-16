@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results - Learning Log{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="bi bi-search"></i> Search Results</h2>
+                <p class="text-muted mb-0">
+                    Found {{ total_results }} results for "{{ query }}"
+                </p>
+            </div>
+            <div>
+                <a href="{{ url_for('topics.index') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Topics
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if total_results == 0 %}
+    <div class="text-center py-5">
+        <i class="bi bi-search display-1 text-muted mb-3"></i>
+        <h4>No results found</h4>
+        <p class="text-muted">Try different keywords or check your spelling.</p>
+        <div class="mt-4">
+            <a href="{{ url_for('topics.create') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Create New Topic
+            </a>
+        </div>
+    </div>
+{% else %}
+
+    {% if topic_results %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <h4><i class="bi bi-collection"></i> Topics ({{ topic_results|length }})</h4>
+                
+                {% for topic in topic_results %}
+                    <div class="card topic-card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title">
+                                        <a href="{{ url_for('topics.view', id=topic.id) }}" class="text-decoration-none">
+                                            {{ topic.name|safe }}
+                                        </a>
+                                        <span class="badge bg-primary ms-2">{{ topic.entries|length }} entries</span>
+                                    </h5>
+                                    {% if topic.description %}
+                                        <p class="card-text">{{ topic.description|safe }}</p>
+                                    {% endif %}
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar"></i> Created {{ topic.date_created.strftime('%B %d, %Y') }}
+                                    </small>
+                                </div>
+                                <div class="ms-3">
+                                    <a href="{{ url_for('topics.view', id=topic.id) }}" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if entry_results %}
+        <div class="row">
+            <div class="col-12">
+                <h4><i class="bi bi-journal-text"></i> Entries ({{ entry_results|length }})</h4>
+                
+                {% for entry in entry_results %}
+                    <div class="card entry-card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title">
+                                        <a href="{{ url_for('topics.view', id=entry.topic.id) }}#entry-{{ entry.id }}" class="text-decoration-none">
+                                            {{ entry.title|safe }}
+                                        </a>
+                                    </h5>
+                                    <p class="text-muted mb-2">
+                                        <i class="bi bi-collection"></i> in 
+                                        <a href="{{ url_for('topics.view', id=entry.topic.id) }}" class="text-decoration-none">
+                                            {{ entry.topic.name }}
+                                        </a>
+                                    </p>
+                                    <div class="entry-preview">
+                                        {{ (entry.content[:200] + '...' if entry.content|length > 200 else entry.content)|safe }}
+                                    </div>
+                                    <small class="text-muted">
+                                        <i class="bi bi-clock"></i> {{ entry.date_created.strftime('%B %d, %Y') }}
+                                    </small>
+                                </div>
+                                <div class="ms-3">
+                                    <a href="{{ url_for('topics.view', id=entry.topic.id) }}#entry-{{ entry.id }}" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Highlight search terms in results
+document.addEventListener('DOMContentLoaded', function() {
+    const query = "{{ query|safe }}";
+    if (query.length > 0) {
+        highlightSearchTerms(query);
+    }
+});
+
+function highlightSearchTerms(query) {
+    const elements = document.querySelectorAll('.card-title a, .card-text, .entry-preview');
+    const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+    
+    elements.forEach(function(element) {
+        if (element.innerHTML) {
+            element.innerHTML = element.innerHTML.replace(regex, '<mark class="search-highlight">$1</mark>');
+        }
+    });
+}
+
+function escapeRegex(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+</script>
+
+<style>
+.search-highlight {
+    background-color: #fff3cd;
+    padding: 0.1rem 0.2rem;
+    border-radius: 0.2rem;
+    font-weight: bold;
+}
+
+.entry-preview {
+    max-height: 4.5em;
+    overflow: hidden;
+    line-height: 1.5em;
+}
+
+.topic-card, .entry-card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.topic-card:hover, .entry-card:hover {
+    transform: translateY(-2px);
+}
+</style>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Create Tag - Learning Log{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('tags.index') }}">Tags</a></li>
+                <li class="breadcrumb-item active">Create Tag</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="bi bi-plus-circle"></i> Create New Tag</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ form.name.label(class="form-label") }}
+                        {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else ""), placeholder="e.g., Python, Machine Learning, Frontend") }}
+                        {% if form.name.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.name.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.description.label(class="form-label") }}
+                        {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), placeholder="Brief description of this tag...") }}
+                        {% if form.description.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.description.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Optional - helps you remember what this tag represents</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.category_id.label(class="form-label") }}
+                        {{ form.category_id(class="form-select" + (" is-invalid" if form.category_id.errors else "")) }}
+                        {% if form.category_id.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.category_id.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            Group this tag under a category. 
+                            <a href="{{ url_for('tags.create_category') }}" target="_blank">Create a new category</a> if needed.
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        {{ form.color.label(class="form-label") }}
+                        {{ form.color(class="form-control form-control-color" + (" is-invalid" if form.color.errors else ""), style="width: 60px; height: 40px;") }}
+                        {% if form.color.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.color.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Leave as default to inherit category color</div>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        {{ form.submit(class="btn btn-primary") }}
+                        <a href="{{ url_for('tags.index') }}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

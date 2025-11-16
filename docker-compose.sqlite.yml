@@ -1,0 +1,27 @@
+services:
+  web:
+    build: .
+    ports:
+      - "127.0.0.1:5000:5000"  # Bind to localhost only for security
+    environment:
+      - FLASK_ENV=production
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key-change-in-production}
+      - DATABASE_URL=sqlite:////app/instance/learning_log.db
+      - SSL_DISABLE=${SSL_DISABLE:-false}
+      - SECURE_HEADERS=${SECURE_HEADERS:-true}
+    volumes:
+      - ./instance:/app/instance
+    user: "${UID:-1000}:${GID:-1000}"  # Dynamic user mapping
+    restart: unless-stopped
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  app-network:
+    driver: bridge
