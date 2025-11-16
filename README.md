@@ -338,7 +338,6 @@ Category        # Tag organization (Skills, Technologies, etc.)
 - **[Docker Guide](README_DOCKER.md)**: Detailed deployment instructions
 - **[Update Guide](DOCKER_UPDATE_GUIDE.md)**: How to update your deployment
 - **[Environment Setup](.env.example)**: Configuration options
-- **[Video Script](video_script.md)**: Project presentation guide
 
 ---
 
